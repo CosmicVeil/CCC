@@ -1,2 +1,2 @@
 # CCC
-# Shows the answer for the CCC(Canadian Computing Contest)
+# Shows the answer for the CCC(Canadian Computing Contest), in C++.
