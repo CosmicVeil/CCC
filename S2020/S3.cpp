@@ -48,7 +48,7 @@ int main(int argc, const char * argv[]) {
         
         for(ll j = 0; j < H.size() - N.size()+1;j++){
             if(substr == currentstr){
-                if(visited.find(N.substr(j,N.size())) == visited.end()){
+                if(visited.find(H.substr(j,N.size())) == visited.end()){
                     ans++;
                     visited[H.substr(j, N.size())] = true;
                 }
