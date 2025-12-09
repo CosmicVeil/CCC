@@ -1,0 +1,133 @@
+//
+//  main.cpp
+//  CCC2023S3
+//
+//  Created by Mohan Dixit on 2024-02-17.
+//
+
+#include <bits/stdc++.h>
+using namespace std;
+
+int main(int argc, const char * argv[]) {
+    // insert code here...
+    int N,M,R,C;
+    cin >> N >> M >> R >> C;
+    
+    int nonRows = N-R;
+    int nonColumns = M-C;
+    
+    vector<vector<char>> ans(N, vector<char>(M,'a'));
+    bool works = true;
+    
+    if(nonRows == 0 && nonColumns == 0){
+        int temp;
+    }else if(nonRows == 0 && nonColumns % 2 == 1 && M%2==0){
+        works = false;
+    }else if(nonColumns == 0 && nonRows % 2 == 1 && N%2==0){
+        works = false;
+    }else if(nonRows == 0){
+        
+        if(nonColumns % 2 == 1){
+            ans[0][M/2] = 'b';
+            nonColumns--;
+        }
+        if(nonColumns != 0){
+            for(int i = 0; i < M;i++){
+                ans[0][i] = 'b';
+                ans[0][M-i-1] = 'b';
+                nonColumns-=2;
+                if(nonColumns == 0){
+                    break;
+                }
+            }
+        }
+        
+    }else if(nonColumns == 0){
+        
+        if(nonRows % 2 == 1){
+            ans[N/2][0] = 'b';
+            nonRows--;
+        }
+        
+        if(nonRows != 0){
+            for(int i = 0; i < N;i++){
+                ans[i][0] = 'b';
+                ans[N-i-1][0] = 'b';
+                nonRows-=2;
+                if(nonRows == 0){
+                    break;
+                }
+            }
+        }
+        
+    }else if(nonRows == N && nonColumns == M){
+        
+        for(int i = 0; i < M;i++){
+            ans[0][i] = 'b';
+        }
+        for(int i = 0; i < N;i++){
+            ans[i][0] = 'b';
+        }
+        ans[0][0] = 'c';
+        nonRows = 0;
+        nonColumns = 0;
+        
+    }else if(nonRows == N){
+        for(int i = 0; i < N;i++){
+            ans[i][0] = 'b';
+        }
+        
+        for(int j = 0; j < M;j++){
+            ans[0][j] = 'c';
+            nonColumns--;
+            if(nonColumns == 0){
+                break;
+            }
+        }
+        nonColumns = 0;
+        nonRows = 0;
+        
+    }else if(nonColumns == M){
+        for(int i = 0; i < M;i++){
+            ans[0][i] = 'b';
+        }
+        
+        for(int j = 0; j < N;j++){
+            ans[j][0] = 'c';
+            nonRows--;
+            if(nonRows == 0){
+                break;
+            }
+        }
+        nonColumns = 0;
+        nonRows = 0;
+    }else{
+        
+
+        for(int i=0; i<N&&nonRows; i++){
+            ans[i][0]='b';
+            nonRows--;
+        }
+
+        for(int j=0; j<M&&nonColumns; j++){
+            ans[0][j]='b';
+            nonColumns--;
+        }
+        
+    }
+    
+
+    
+    if(nonRows == 0 && nonColumns == 0){
+        for(int i = 0; i < N;i++){
+            for(int j= 0; j< M;j++){
+                cout << ans[i][j];
+            }
+            cout << endl;
+        }
+    }else{
+        cout << "IMPOSSIBLE" << endl;
+    }
+                           
+    return 0;
+}
