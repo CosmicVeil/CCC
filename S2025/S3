@@ -1,0 +1,141 @@
+//
+//  main.cpp
+//  CCC2025S3
+//
+//  Created by Mohan Dixit on 2025-12-25.
+//
+
+#include <iostream>
+#include <set>
+#include <algorithm>
+#include <vector>
+
+
+using namespace std;
+typedef long long ll;
+
+
+vector<ll> color(300000);
+vector<ll> prettiness(300000);
+
+struct CompareByArray {
+    bool operator()(ll i, ll j) const {
+        if (prettiness[i] != prettiness[j])
+            return prettiness[i] < prettiness[j];   // sort by value in A
+        return i < j;             // tie-break by index
+    }
+};
+
+int main(int argc, const char * argv[]) {
+    // insert code here...
+    ll N,M,Q;cin >> N >> M >> Q;
+    
+    set<ll,CompareByArray> m;
+    set<ll,CompareByArray> notM;
+    vector<set<ll,CompareByArray>> colors(M+1);
+    
+    ll maxPoss = 0;
+    
+    for(ll i = 0 ; i < N;i++){
+        ll c,p;cin >> c >> p;
+        
+        color[i] = c;
+        prettiness[i] = p;
+        colors[c].insert(i);
+    }
+    
+    for(ll i = 1; i <= M;i++){
+        maxPoss += prettiness[*prev(colors[i].end())];
+        m.insert(*prev(colors[i].end()));
+        
+        for (auto it = colors[i].begin(); it != prev(colors[i].end()); ++it) {
+            notM.insert(*it);
+        }
+    }
+    
+    if(notM.size()==0){
+        cout << maxPoss << endl;
+    }else{
+        cout<<  max(maxPoss, maxPoss + prettiness[*notM.rbegin()]-prettiness[*m.begin()]) << endl;
+    }
+    
+    
+    while (Q--) {
+        ll a, i;
+        cin >> a >> i;
+        i--;
+
+        if (a == 1) {
+            ll c; cin >> c;
+            ll oldC = color[i];
+
+            if (oldC != c) {
+                if (!colors[oldC].empty()) {
+                    ll best = *colors[oldC].rbegin();
+                    m.erase(best);
+                    maxPoss -= prettiness[best];
+                    for (auto x : colors[oldC])
+                        if (x != best) notM.erase(x);
+                }
+                if (!colors[c].empty()) {
+                    ll best = *colors[c].rbegin();
+                    m.erase(best);
+                    maxPoss -= prettiness[best];
+                    for (auto x : colors[c])
+                        if (x != best) notM.erase(x);
+                }
+
+                colors[oldC].erase(i);
+                colors[c].insert(i);
+                color[i] = c;
+
+                if (!colors[oldC].empty()) {
+                    ll best = *colors[oldC].rbegin();
+                    m.insert(best);
+                    maxPoss += prettiness[best];
+                    for (auto x : colors[oldC])
+                        if (x != best) notM.insert(x);
+                }
+                if (!colors[c].empty()) {
+                    ll best = *colors[c].rbegin();
+                    m.insert(best);
+                    maxPoss += prettiness[best];
+                    for (auto x : colors[c])
+                        if (x != best) notM.insert(x);
+                }
+            }
+        } else {
+            ll p; cin >> p;
+            ll c = color[i];
+
+            if (!colors[c].empty()) {
+                ll best = *colors[c].rbegin();
+                m.erase(best);
+                maxPoss -= prettiness[best];
+                for (auto x : colors[c])
+                    if (x != best) notM.erase(x);
+            }
+
+            colors[c].erase(i);
+            prettiness[i] = p;
+            colors[c].insert(i);
+
+            ll best = *colors[c].rbegin();
+            m.insert(best);
+            maxPoss += prettiness[best];
+            for (auto x : colors[c])
+                if (x != best) notM.insert(x);
+        }
+
+        if (!notM.empty())
+            cout << max(maxPoss,
+                        maxPoss + prettiness[*notM.rbegin()] - prettiness[*m.begin()]) << '\n';
+        else
+            cout << maxPoss << '\n';
+    }
+
+    
+    
+    
+    return EXIT_SUCCESS;
+}
