@@ -1,0 +1,118 @@
+//
+//  main.cpp
+//  CCC2025S4
+//
+//  Created by Mohan Dixit on 2025-12-26.
+//
+
+#include <iostream>
+#include <queue>
+#include <vector>
+#include <algorithm>
+#include <map>
+#include <cstdlib>
+
+
+
+using namespace std;
+
+typedef long long ll;
+
+ll N,M;
+
+
+map<ll,vector<pair<ll,ll>>> edges;
+
+map<pair<ll,ll>, ll> edgeWeight;
+
+map<pair<ll,ll>,ll> dist;
+
+int timesRan = 0;
+
+void dijkstras(){
+    
+    
+    priority_queue<pair<ll, pair<ll,ll>>, vector<pair<ll, pair<ll,ll>>>, greater<pair<ll, pair<ll,ll>>>> pq;
+    
+    edges[0].push_back({1,0});
+    
+    // distance, {current node, previous node}
+    dist[{1,0}] = 0;
+    edgeWeight[{1,0}] = 0;
+
+    pq.emplace(make_pair(0,make_pair(1, 0)));
+    
+    while(!pq.empty()){
+        
+        
+        auto top = pq.top();
+        pq.pop();
+        
+        ll d = top.first;
+        ll c = top.second.first;
+        ll p = top.second.second;
+        
+        ll eW = edgeWeight[{c,p}];
+
+        if(dist.find({c,p}) != dist.end() && dist[{c,p}] < d){
+            continue;
+        }
+
+        if(c==N){
+            cout << d << endl;
+            exit(0);
+        }
+
+        for(pair<ll,ll> a: edges[c]){
+            ll v = a.first;
+            ll l = a.second;
+            
+            if(v==p){
+                continue;
+            }
+            
+            if(dist.find({v,c}) == dist.end() || dist[{v,c}] > abs(l-eW) + d){
+                dist[{v,c}] = abs(l-eW) + d;
+                dist[{c,v}] = abs(l-eW) + d;
+                pq.emplace(make_pair(dist[{v,c}],make_pair(v, c)));
+            }
+               
+        }
+
+    
+    }
+}
+
+
+
+
+int main(int argc, const char * argv[]) {
+    // insert code here...
+    
+    cin >> N >> M;
+    
+    for(ll i = 0; i < M;i++){
+        ll a,b,c; cin >> a >> b >> c;
+        
+        edges[a].push_back({b,c});
+        edges[b].push_back({a,c});
+        
+        edgeWeight[{a,b}] = c;
+        edgeWeight[{b,a}] = c;
+    }
+
+    dijkstras();
+
+//    ll ans = 1e17;
+//        
+//    for(pair<ll,ll> val: edges[N]){
+//        if(dist[{N,val.first}] < ans){
+//            ans =dist[{N,val.first}];
+//        }
+//    }
+
+//    cout << ans << endl;
+    
+    
+    return EXIT_SUCCESS;
+}
